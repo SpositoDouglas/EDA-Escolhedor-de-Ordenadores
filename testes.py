@@ -1,7 +1,9 @@
+import random
 import unittest
-from metodos import insercao, intercalacao, hibrida
+from metodos import insercao, intercalacao, rapida, hibrida, contagem, base
+from escolhedor import escolher, ordenar
 
-METODOS = [insercao, intercalacao, hibrida]
+METODOS = [insercao, intercalacao, rapida, hibrida, contagem, base, ordenar]
 
 VAZIA = []
 UM_ELEMENTO = [7]
@@ -43,6 +45,19 @@ class TestOrdenacao(unittest.TestCase):
         for lista in [VAZIA, UM_ELEMENTO, IGUAIS, ORDENADA, INVERTIDA, NEGATIVOS]:
             with self.subTest(lista=lista):
                 self.assertEqual(hibrida(lista[:], 1), sorted(lista))
+
+    def test_escolher_nao_usa_contagem_com_faixa_grande(self):
+        lista = list(range(0, 10**9, 10**5)) * 2
+        self.assertNotEqual(escolher(lista), contagem)
+
+    def test_escolher_cenarios(self):
+        self.assertEqual(escolher([5, 3, 1]), insercao)
+        self.assertEqual(escolher(list(range(1000))), insercao)
+        self.assertEqual(escolher([i % 7 for i in range(1000)]), contagem)
+        random.seed(1)
+        grande = [random.randint(0, 10**9) for _ in range(2000)]
+        self.assertEqual(escolher(grande), base)
+        self.assertEqual(escolher(grande[:100]), hibrida)
 
 
 if __name__ == "__main__":
